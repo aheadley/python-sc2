@@ -1,11 +1,14 @@
 import asyncio
+import sys
 
-from .sc2process import SC2Process
+from .sc2process import RemoteProcess, LocalProcess
 from .portconfig import Portconfig
 from .client import Client
 from .player import Human, Bot, Observer
 from .data import Race, Difficulty, Result, ActionResult
 from .game_state import GameState
+
+SC2Process = lambda: RemoteProcess(port=int(sys.argv[1]))
 
 async def _play_game_human(client, realtime):
     while True:
@@ -34,7 +37,7 @@ async def _play_game_ai(client, player_id, ai, realtime):
             print("OBSR", state.observation.player_result)
             result = Result(min(state.observation.player_result, key=lambda p: p.player_id).result)
             await client.leave()
-            await client.quit()
+            # await client.quit()
             return result
 
         gs = GameState(state.observation, game_data)
@@ -57,7 +60,7 @@ async def _host_game(map_settings, players, realtime=False, observer=False, port
     async with SC2Process() as server:
         await server.ping()
 
-        await server.create_game(map_settings, players, realtime)
+        print(await server.create_game(map_settings, players, realtime))
 
         client = Client(server._ws)
 
@@ -86,6 +89,7 @@ async def _join_game(map_settings, players, realtime, portconfig):
 
 def run_game(*args, **kwargs):
     if sum(isinstance(p, (Human, Bot)) for p in args[1]) > 1:
+        print("running with portconfig")
         portconfig = Portconfig()
         result = asyncio.get_event_loop().run_until_complete(asyncio.gather(
             _host_game(*args, **kwargs, portconfig=portconfig),

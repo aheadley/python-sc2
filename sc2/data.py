@@ -1,5 +1,6 @@
 import enum
 from s2clientprotocol import (
+    common_pb2 as c_pb,
     sc2api_pb2 as sc_pb,
     raw_pb2 as raw_pb,
     data_pb2 as data_pb,
@@ -8,7 +9,7 @@ from s2clientprotocol import (
 from .ids.unit_typeid import PROBE, SCV, DRONE
 
 PlayerType = enum.Enum("PlayerType", sc_pb.PlayerType.items())
-Race = enum.Enum("Race", sc_pb.Race.items())
+Race = enum.Enum("Race", c_pb.Race.items())
 Difficulty = enum.Enum("Difficulty", sc_pb.Difficulty.items())
 Status = enum.Enum("Status", sc_pb.Status.items())
 Result = enum.Enum("Result", sc_pb.Result.items())

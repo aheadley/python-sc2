@@ -48,4 +48,4 @@ class Paths(object):
     except FileNotFoundError as e:
         print("SC2 installation not found:")
         print(f"File '{e.filename}' does not exist.")
-        exit(1)
+        # exit(1)

@@ -167,7 +167,7 @@ class Unit(object):
         return action.UnitCommand(ability, self, *args, **kwargs)
 
     def __repr__(self):
-        return f"Unit(name={self.name !r}, tag={self.tag})"
+        return f"Unit(name={self.name !r}, tag={self.tag}, hp={self.health}/{self.health_max})"
 
 class UnitOrder(object):
     @classmethod

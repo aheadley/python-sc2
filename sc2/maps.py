@@ -1,7 +1,9 @@
-from .paths import Paths
-
 def get(name=None):
     maps = []
+    try:
+        from .paths import Paths
+    except:
+        return maps
     for mapdir in (p for p in Paths.MAPS.iterdir() if p.is_dir()):
         for mapfile in (p for p in mapdir.iterdir() if p.is_file()):
             if mapfile.suffix == ".SC2Map":
@@ -14,7 +16,8 @@ def get(name=None):
         if m.matches(name):
             return m
 
-    raise KeyError(f"Map '{name}' was not found")
+    # raise KeyError(f"Map '{name}' was not found")
+    print(f"Map '{name}' was not found")
 
 class Map(object):
     def __init__(self, path):

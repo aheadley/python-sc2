@@ -8,9 +8,14 @@ class Controller(Protocol):
 
     async def create_game(self, game_map, players, realtime):
         assert isinstance(realtime, bool)
+        try:
+            m = str(game_map.path)
+        except AttributeError:
+            m = str(game_map)
+
         req = sc_pb.RequestCreateGame(
             local_map=sc_pb.LocalMap(
-                map_path=str(game_map.path)
+                map_path=m
             ),
             realtime=realtime
         )
