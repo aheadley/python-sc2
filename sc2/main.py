@@ -1,5 +1,6 @@
 import asyncio
 import sys
+import traceback
 
 from .sc2process import RemoteProcess, LocalProcess
 from .portconfig import Portconfig
@@ -32,19 +33,26 @@ async def _play_game_ai(client, player_id, ai, realtime):
 
     iteration = 0
     while True:
-        state = await client.observation()
-        if len(state.observation.player_result) > 0:
-            print("OBSR", state.observation.player_result)
-            result = Result(min(state.observation.player_result, key=lambda p: p.player_id).result)
+        try:
+            state = await client.observation()
+            if len(state.observation.player_result) > 0:
+                print("OBSR", state.observation.player_result)
+                result = Result(min(state.observation.player_result, key=lambda p: p.player_id).result)
+                await client.leave()
+                return result
+
+            gs = GameState(state.observation, game_data)
+
+            ai._prepare_step(gs)
+            await ai.on_step(gs, iteration)
+        except KeyboardInterrupt:
+            print('Exiting...')
             await client.leave()
-            # await client.quit()
-            return result
-
-        gs = GameState(state.observation, game_data)
-
-        ai._prepare_step(gs)
-        await ai.on_step(gs, iteration)
-
+            sys.exit(2)
+        except Exception as err:
+            print('=== Got error but continuing anyway ===')
+            traceback.print_exc()
+            print('=== END ERROR ===')
         if not realtime:
             await client.step()
         iteration += 1

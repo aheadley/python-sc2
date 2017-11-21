@@ -19,6 +19,9 @@ class Units(list):
     def __call__(self, *args, **kwargs):
         return UnitSelection(self, *args, **kwargs)
 
+    def __repr__(self):
+        return f"Units{list(str(u) for u in self.sorted(lambda e: e.tag))}"
+
     def select(self, *args, **kwargs):
         return UnitSelection(self, *args, **kwargs)
 

@@ -17,11 +17,18 @@ class Common(object):
         assert attr in self.ATTRIBUTES, f"'{attr}' is not a valid attribute"
         return int(getattr(self._proto, attr))
 
+    def __repr__(self):
+        return 'CommonState{}'.format(str({k: self.__getattr__(k) for k in self.ATTRIBUTES}))
+
 class GameState(object):
     def __init__(self, observation, game_data):
         self.common = Common(observation.observation.player_common)
         self.units = Units.from_proto(observation.observation.raw_data.units, game_data)
         self.psionic_matrix = PsionicMatrix.from_proto(observation.observation.raw_data.player.power_sources)
+
+    def __repr__(self):
+        return 'GameState(common={}, units={}, psionic_matrix={})'.format(
+            str(self.common), str(self.units), str(self.psionic_matrix))
 
     @property
     def mineral_field(self):
